@@ -7,7 +7,7 @@ Source code for the Twitter Bot
 
 Install the requirements:
 
-`pip -r install requirements.txt`
+`pip install -r requirements.txt`
 
 Try the image generator 
 
