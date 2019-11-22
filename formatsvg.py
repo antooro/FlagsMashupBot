@@ -4,6 +4,7 @@ from PIL import Image
 from collections import defaultdict,Counter
 from io import BytesIO
 from names import NameJoiner
+from bs4 import BeautifulSoup
 import os
 import cv2
 import numpy as np
@@ -232,8 +233,72 @@ class CountryMixer():
 
         return templateSVG.text, colorsDict
 
-    def changeColors(self, cambios):
 
+
+    def clean(self,texto):
+        archivo = open("colores","r")
+        codigos = archivo.readlines()
+        codigos = [c.split(",") for c in codigos]
+        clean = {}
+        for c in codigos:
+            c = c[0].split()
+            clean[c[0].lower()] = c[1].replace("\n","")
+
+        
+        data2 = texto
+        for key,value in clean.items():
+            tag = f'fill="{key}"'
+
+            if tag in data2:
+                nuevo_val = f'fill="{value}"'
+                print(tag,nuevo_val)
+                data2 = data2.replace(tag,nuevo_val)
+            tag = f'fill:{key}'
+
+            if tag in data2:
+                nuevo_val = f'fill:{value}'
+                print(tag,nuevo_val)
+                data2 = data2.replace(tag,nuevo_val)
+        
+
+        if data2 is not texto:
+            print("difieren")
+            texto = data2
+        
+        root = BeautifulSoup(texto,"lxml")
+        svg = root.find("svg")
+
+        paths = svg.findAll('rect', recursive=False)
+        modi = False
+        for t in paths:
+            fill = t.get("fill")
+
+            if fill == None  and t.get("style") == None and t.get("stroke") == None:
+                t['fill'] ="#000000"
+                modi = True
+
+
+        paths = svg.findAll('path', recursive=False)
+
+
+        for t in paths:
+            fill = t.get("fill")
+
+            if fill == None and t.get("style") == None and t.get("stroke") == None:
+                t['fill'] ="#000000"
+                modi = True
+
+        if (modi):
+            print("difieren")
+            datos = str(svg).replace("<html><body>","\n").replace("</body></html>","")
+            texto = datos
+
+
+
+        return texto
+
+    def changeColors(self, cambios):
+        self.svgText = self.clean(self.svgText)
         for new, old in cambios.items():
             self.svgText = self.svgText.replace(old, new.replace('#','ç'))
             self.svgText = self.svgText.replace(old.upper(), new.replace('#','ç'))
@@ -317,7 +382,7 @@ class CountryMixer():
                 ruta = f'{p["alpha3Code"].lower()}.png'
                 nruta = f'bandera{i}.png'
                 i = i + 1
-                shutil.copy2(ruta,nruta) 
+                shutil.move(ruta,nruta) 
             except:
                 print("no fue posible elimiar", ruta)
 
@@ -359,7 +424,7 @@ class CountryMixer():
         name = self.calculateNames()
         print(name)
 
-        #self.removePNGs()
+        self.removePNGs()
         return [self.pais1["name"], self.pais2["name"]], self.getFlagsEmojis(), name
 
 
