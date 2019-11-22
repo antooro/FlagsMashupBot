@@ -1,5 +1,8 @@
 # FlagsMashupBot
 Source code for the Twitter Bot
+
+![alt text](https://i.imgur.com/LSepqer.png)
+
 https://twitter.com/FlagsMashupBot
 -------------------------------------------------------
 
