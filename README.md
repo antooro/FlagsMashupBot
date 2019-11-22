@@ -1,6 +1,6 @@
 # FlagsMashupBot
 Source code for the Twitter Bot
-
+https://twitter.com/FlagsMashupBot
 -------------------------------------------------------
 
 `git clone https://github.com/antooro/FlagsMashupBot `
