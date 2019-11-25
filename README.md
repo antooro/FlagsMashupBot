@@ -22,3 +22,4 @@ It will generate 3 files, the 2 countries and the mashup
 TODO
 
 -Windows compatibility
+-Translate all the code
