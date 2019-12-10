@@ -4,6 +4,7 @@ Live demo:
 http://flagsmashupbot.pythonanywhere.com/
 
 
+<a href="https://twitter.com/intent/tweet?button_hashtag=flagsmashupbot&ref_src=twsrc%5Etfw" class="twitter-hashtag-button" data-show-count="false">Tweet #flagsmashupbot</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 Source code for the Twitter Bot
 
 ![alt text](https://i.imgur.com/LSepqer.png)
