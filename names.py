@@ -2,123 +2,135 @@ import re
 import random
 import sys
 
-TOOBIG		= -1	
-TOOSMALL	= -2
-NOTNEW		= -3
-EMPTY		= -1
+TOOBIG = -1
+TOOSMALL = -2
+NOTNEW = -3
+EMPTY = -1
+
 
 class NameJoiner():
 
+    def __init__(self, str1, str2):
+        words = [str1, str2]
+        random.shuffle(words)
+        self.fullStartName = words[0]
+        self.fullEndName = words[1]
+        self.initVariables()
 
-	def __init__(self, str1, str2):
-		words = [str1, str2]
-		random.shuffle(words)
-		self.fullStartName = words[0]
-		self.fullEndName   = words[1]
-		self.initVariables()
-	
-	def initVariables(self):
-		self.lower_limit = min(len(self.fullStartName), len(self.fullEndName))
-		self.upper_limit = max(len(self.fullStartName), len(self.fullEndName)) + self.lower_limit -1	
-		self.firstPositions  = self.getKeyVocalsPositions(self.fullStartName)
-		self.secondPositions = self.getKeyVocalsPositions(self.fullEndName)
+    def initVariables(self):
+        self.lower_limit = min(len(self.fullStartName), len(self.fullEndName))
+        self.upper_limit = max(len(self.fullStartName), len(
+            self.fullEndName)) + self.lower_limit - 1
+        self.firstPositions = self.getKeyVocalsPositions(self.fullStartName)
+        self.secondPositions = self.getKeyVocalsPositions(self.fullEndName)
 
-	def join(self):
-		
-		res = self.tryToJoin()
-		if res == -1:
-			self.fullStartName, self.fullEndName = self.fullEndName, self.fullStartName
-			self.initVariables()
-			res = self.tryToJoin()
-		
-		if res == -1:
-			self.initVariables()
-			return self.fullStartName+self.fullEndName[self.secondPositions[-1]+1:]
-			print("DEP", self.fullEndName, self.fullStartName)
-			sys.exit(0)
-			return "DEP"
-			
-		
-		return res
+    def join(self):
 
-	def tryToJoin(self):
-		
-		firstSplitPlace = self.chooseRandomFirstSplit()
-		secondSplitPlace = NOTNEW
-		while secondSplitPlace < 0:	
-			secondSplitPlace = self.chooseRandomSecondSplit(firstSplitPlace)
-			
-			if(secondSplitPlace < 0):
-				self.handleErrorWithFirstPlace(secondSplitPlace, firstSplitPlace)
-				firstSplitPlace = self.chooseRandomFirstSplit()
-				if firstSplitPlace == EMPTY: return EMPTY
-			
-			else:	
-				namex = self.fullStartName[:firstSplitPlace] + self.fullEndName[secondSplitPlace:]
-				if self.fullEndName == namex or self.fullStartName == namex:
-					self.secondPositions = [i for i in self.secondPositions if i != secondSplitPlace-1]
-					if(len(self.secondPositions) == 0):
-						self.secondPositions = self.getKeyVocalsPositions(self.fullEndName)
-						self.firstPositions = self.erasePlaceEq(firstSplitPlace)
-						firstSplitPlace = self.chooseRandomFirstSplit()
-						if firstSplitPlace == EMPTY: return EMPTY
-							
-					secondSplitPlace = NOTNEW
+        res = self.tryToJoin()
+        if res == -1:
+            self.fullStartName, self.fullEndName = self.fullEndName, self.fullStartName
+            self.initVariables()
+            res = self.tryToJoin()
 
-		return self.fullStartName[:firstSplitPlace] + self.fullEndName[secondSplitPlace:]
+        if res == -1:
+            self.initVariables()
+            return self.fullStartName+self.fullEndName[self.secondPositions[-1]+1:]
+            print("DEP", self.fullEndName, self.fullStartName)
+            sys.exit(0)
+            return "DEP"
 
-	def handleErrorWithFirstPlace(self, error, firstSplitPlace):
-		if(error == TOOBIG): # Need smaller first part
-			self.firstPositions = self.erasePlacesGreaterEq(firstSplitPlace)
+        return res
 
-		elif(error == TOOSMALL): # Need greater first part
-			self.firstPositions = self.erasePlacesLowerEq(firstSplitPlace)
+    def tryToJoin(self):
 
-	def erasePlaceEq(self, position):
-		p = position - 1
-		res = [i for i in self.firstPositions if i != p]
-		
-		return res
+        firstSplitPlace = self.chooseRandomFirstSplit()
+        secondSplitPlace = NOTNEW
+        while secondSplitPlace < 0:
+            secondSplitPlace = self.chooseRandomSecondSplit(firstSplitPlace)
 
-	def erasePlacesLowerEq(self, position):
-		p = position - 1
-		res = [i for i in self.firstPositions if i > p]
-		
-		return res
+            if(secondSplitPlace < 0):
+                self.handleErrorWithFirstPlace(
+                    secondSplitPlace, firstSplitPlace)
+                firstSplitPlace = self.chooseRandomFirstSplit()
+                if firstSplitPlace == EMPTY:
+                    return EMPTY
 
-	def erasePlacesGreaterEq(self, position):
-		p = position - 1
-		res = [i for i in self.firstPositions if i < p]
-		
-		return res
+            else:
+                namex = self.fullStartName[:firstSplitPlace] + \
+                    self.fullEndName[secondSplitPlace:]
+                if self.fullEndName == namex or self.fullStartName == namex:
+                    self.secondPositions = [
+                        i for i in self.secondPositions if i != secondSplitPlace-1]
+                    if(len(self.secondPositions) == 0):
+                        self.secondPositions = self.getKeyVocalsPositions(
+                            self.fullEndName)
+                        self.firstPositions = self.erasePlaceEq(
+                            firstSplitPlace)
+                        firstSplitPlace = self.chooseRandomFirstSplit()
+                        if firstSplitPlace == EMPTY:
+                            return EMPTY
 
-	def chooseRandomFirstSplit(self):
+                    secondSplitPlace = NOTNEW
 
-		if len(self.firstPositions) == 0:
-			print( f"{self.fullStartName} has been omitted while trying to join with {self.fullEndName}" )
-			return -1		
-		pos = random.choice(self.firstPositions) + 1
+        return self.fullStartName[:firstSplitPlace] + self.fullEndName[secondSplitPlace:]
 
-		return pos
+    def handleErrorWithFirstPlace(self, error, firstSplitPlace):
+        if(error == TOOBIG):  # Need smaller first part
+            self.firstPositions = self.erasePlacesGreaterEq(firstSplitPlace)
 
-	def getKeyVocalsPositions(self, s):
-		regex_iter = re.finditer(r'[aeiouy][^aeiou]', s.lower())
-		positions = [ i.start() for i in regex_iter]	
-		return positions
-	
-	def chooseRandomSecondSplit(self, firstSplitPlace):
-		
-		minimumCharactersLeft = self.lower_limit - firstSplitPlace
-		maximumCharactersLeft = self.upper_limit - firstSplitPlace
+        elif(error == TOOSMALL):  # Need greater first part
+            self.firstPositions = self.erasePlacesLowerEq(firstSplitPlace)
 
-		minimumIndex = len(self.fullEndName) - maximumCharactersLeft
-		maximumIndex = len(self.fullEndName) - minimumCharactersLeft
+    def erasePlaceEq(self, position):
+        p = position - 1
+        res = [i for i in self.firstPositions if i != p]
 
-		filtered_big_positions = [i for i in self.secondPositions if i <= maximumIndex]
-		#print("big", *[self.fullEndName[i:] for i in filtered_big_positions])
-		if len(filtered_big_positions) == 0: return -2
-		filtered_positions = [i for i in self.secondPositions if i+1 >= minimumIndex and i+1 <= maximumIndex]
-		#print("all", *[self.fullEndName[i:] for i in filtered_positions])
-		if len(filtered_positions) == 0: return -1
+        return res
 
-		return random.choice(filtered_positions) + 1 
+    def erasePlacesLowerEq(self, position):
+        p = position - 1
+        res = [i for i in self.firstPositions if i > p]
+
+        return res
+
+    def erasePlacesGreaterEq(self, position):
+        p = position - 1
+        res = [i for i in self.firstPositions if i < p]
+
+        return res
+
+    def chooseRandomFirstSplit(self):
+
+        if len(self.firstPositions) == 0:
+            print(
+                f"{self.fullStartName} has been omitted while trying to join with {self.fullEndName}")
+            return -1
+        pos = random.choice(self.firstPositions) + 1
+
+        return pos
+
+    def getKeyVocalsPositions(self, s):
+        regex_iter = re.finditer(r'[aeiouy][^aeiou]', s.lower())
+        positions = [i.start() for i in regex_iter]
+        return positions
+
+    def chooseRandomSecondSplit(self, firstSplitPlace):
+
+        minimumCharactersLeft = self.lower_limit - firstSplitPlace
+        maximumCharactersLeft = self.upper_limit - firstSplitPlace
+
+        minimumIndex = len(self.fullEndName) - maximumCharactersLeft
+        maximumIndex = len(self.fullEndName) - minimumCharactersLeft
+
+        filtered_big_positions = [
+            i for i in self.secondPositions if i <= maximumIndex]
+        #print("big", *[self.fullEndName[i:] for i in filtered_big_positions])
+        if len(filtered_big_positions) == 0:
+            return -2
+        filtered_positions = [
+            i for i in self.secondPositions if i+1 >= minimumIndex and i+1 <= maximumIndex]
+        #print("all", *[self.fullEndName[i:] for i in filtered_positions])
+        if len(filtered_positions) == 0:
+            return -1
+
+        return random.choice(filtered_positions) + 1
