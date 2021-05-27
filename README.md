@@ -10,7 +10,9 @@ http://flagsmashupbot.pythonanywhere.com/
 https://twitter.com/FlagsMashupBot
 -------------------------------------------------------
 
-`git clone https://github.com/antooro/FlagsMashupBot `
+`git clone https://github.com/antooro/FlagsMashupBot`
+
+Install Pycairo's [required files in your machine](https://pycairo.readthedocs.io/en/latest/getting_started.html)
 
 Install the requirements:
 
@@ -25,5 +27,4 @@ It will generate 3 files, the 2 countries and the mashup
 ------------------
 TODO
 
--Windows compatibility
--Translate all the code
+- Windows compatibility
