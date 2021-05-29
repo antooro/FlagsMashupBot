@@ -1,5 +1,7 @@
+b64==0.4
 beautifulsoup4==4.9.3
 bs4==0.0.1
+cached-properties==0.7.4
 cairocffi==1.2.0
 CairoSVG==2.5.2
 certifi==2020.12.5
@@ -9,10 +11,7 @@ cssselect2==0.4.1
 defusedxml==0.7.1
 idna==2.10
 lxml==4.6.3
-numpy==1.20.3
-opencv-python==4.5.2.52
 Pillow==8.2.0
-pycairo==1.20.0
 pycparser==2.20
 requests==2.25.1
 soupsieve==2.2.1

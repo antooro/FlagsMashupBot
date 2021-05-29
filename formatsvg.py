@@ -1,23 +1,18 @@
 import requests
 import random
 from PIL import Image
-from collections import defaultdict, Counter
-from io import BytesIO
+from collections import Counter
 from names import NameJoiner
 from bs4 import BeautifulSoup
 import os
-import cv2
-import numpy as np
-import textwrap
 import shutil
 import cairosvg
 import sqlite3
-import re
 import itertools
 import math
 
 
-class CountryMixer():
+class CountryMixer:
     def rgb2hex(self, color):
         r, g, b = color
         code = "#{:02x}{:02x}{:02x}".format(r, g, b)
@@ -57,17 +52,6 @@ class CountryMixer():
         self.countries = (self.first_country, self.second_country)
         for country in self.countries:
             self.downloadPNGFlag(country["alpha3Code"])
-
-    def getImage(self, data, num):
-        hasImage = False
-        while not hasImage:
-            first_country = random.choice(data)
-            hasImage = True
-
-        return first_country
-
-    def getEmoji(self, code):
-        return (code)
 
     def updateDbWithBase(self, template):
         conn = sqlite3.connect('countries.db')
@@ -111,7 +95,7 @@ class CountryMixer():
                   (first_country, second_country))
         rows = c.fetchall()
         print(rows)
-        if (len(rows) == 1 and rows[0][2]):
+        if len(rows) == 1 and rows[0][2]:
             co = Counter(rows[0])
             self.template3Code = co.most_common()[-1][0]
             if self.template3Code == self.first_country['alpha2Code']:
@@ -144,7 +128,6 @@ class CountryMixer():
                 return flag
 
     def downloadPNGFlag(self, alpha3Code):
-        #r = open(f"countries/{alpha3Code.lower()}.svg","r")
         r = requests.get(
             f"https://restcountries.eu/data/{alpha3Code.lower()}.svg")
         print(alpha3Code)
@@ -155,7 +138,6 @@ class CountryMixer():
 
         self.first_country = self.chooseRandomFlag()
         self.second_country = self.chooseRandomFlag()
-        #self.second_country = self.first_country
         self.countries = (self.first_country, self.second_country)
 
         for country in self.countries:
@@ -179,22 +161,22 @@ class CountryMixer():
         for country in self.countries:
             img = Image.open(f'{country["alpha3Code"].lower()}.png')
             width, height = img.size
-            limite = ((width*height)*.01)
+            limit = ((width * height) * .01)
             colors = img.convert('RGBA').getcolors(
-                img.size[0]*img.size[1])  # this converts the mode to RGB
+                img.size[0] * img.size[1])  # this converts the mode to RGB
             colors = sorted(colors, key=lambda x: x[0], reverse=True)
             colors = [c for c in colors if c[1][3] != 0]
 
             colorb1 = [self.rgb2hex(color[1][:3])
-                       for color in colors[:5] if color[0] > limite]
+                       for color in colors[:5] if color[0] > limit]
 
             combinations = itertools.combinations(colorb1, 2)
-            colores = []
+
             for pair in combinations:
                 r1, g1, b1 = tuple(int(pair[0].replace("#", "")[
-                                   i:i+2], 16) for i in (0, 2, 4))
+                                       i:i + 2], 16) for i in (0, 2, 4))
                 r2, g2, b2 = tuple(int(pair[1].replace("#", "")[
-                                   i:i+2], 16) for i in (0, 2, 4))
+                                       i:i + 2], 16) for i in (0, 2, 4))
                 dif = math.sqrt(math.pow(r1 - r2, 2) +
                                 math.pow(g1 - g2, 2) + math.pow(b1 - b2, 2))
                 if dif < 50 and pair[1] in colorb1:
@@ -217,10 +199,10 @@ class CountryMixer():
             template, colors = colors, template
 
         elif len(nameColorList[FIRSTCOUNTRY][COLORS]) == len(nameColorList[LASTCOUNTRY][COLORS]):
-            if (random.randint(0, 2) == 0):
+            if random.randint(0, 2) == 0:
                 template, colors = colors, template
 
-            if(self.isAlreadyDone(self.countries[template]["alpha2Code"], self.countries[colors]["alpha2Code"])):
+            if self.isAlreadyDone(self.countries[template]["alpha2Code"], self.countries[colors]["alpha2Code"]):
                 template, colors = colors, template
 
             if self.first_country is not self.second_country:
@@ -230,7 +212,6 @@ class CountryMixer():
             self.template3Code = self.countries[template]['alpha3Code']
         templateSVG = requests.get(
             f"https://restcountries.eu/data/{self.template3Code.lower()}.svg")
-        #templateSVG = open(f"countries/{self.template3Code.lower()}.svg","r").read()
 
         for i in nameColorList:
 
@@ -251,9 +232,9 @@ class CountryMixer():
         color_codes = colors_file.readlines()
         color_codes = [code.split(",") for code in color_codes]
         clean = {}
-        for c in color_codes:
-            c = c[0].split()
-            clean[c[0].lower()] = c[1].replace("\n", "")
+        for code in color_codes:
+            code = code[0].split()
+            clean[code[0].lower()] = code[1].replace("\n", "")
 
         data2 = text
         for key, value in clean.items():
@@ -271,7 +252,7 @@ class CountryMixer():
                 data2 = data2.replace(tag, new_value)
 
         if data2 is not text:
-            print("They difer")
+            print("They differ")
             text = data2
 
         root = BeautifulSoup(text, "lxml")
@@ -282,7 +263,7 @@ class CountryMixer():
         for t in svg_rects:
             fill = t.get("fill")
 
-            if fill == None and t.get("style") == None and t.get("stroke") == None:
+            if fill is None and t.get("style") is None and t.get("stroke") is None:
                 t['fill'] = "#000000"
                 differs = True
 
@@ -291,11 +272,11 @@ class CountryMixer():
         for t in svc_paths:
             fill = t.get("fill")
 
-            if fill == None and t.get("style") == None and t.get("stroke") == None:
+            if fill is None and t.get("style") is None and t.get("stroke") is None:
                 t['fill'] = "#000000"
                 differs = True
 
-        if (differs):
+        if differs:
             print("They differ")
             data = str(svg).replace("<html><body>",
                                     "\n").replace("</body></html>", "")
@@ -346,10 +327,9 @@ class CountryMixer():
         elif len(name1.split()) > 1:
             name = (" ".join(name1.split()[:-1]) + " " + name2.split()[-1])
         else:
-            #name = self.portnameteau([self.first_country['name'],self.second_country['name']])
             name = NameJoiner(
                 self.first_country['name'], self.second_country['name']).join()
-        if (name1 == name2):
+        if name1 == name2:
             name = name1 + " 2"
         return name
 
@@ -357,14 +337,13 @@ class CountryMixer():
         image = Image.open(f'{self.template3Code.lower()}.png')
         width, height = image.size
         uploaded = False
-        bigger = max(width, height)
-        if bigger > 4096:
-            bigger = 4096
+        bigger = max(width, height, 4096)
+        limit_kb = 3072
+
         while not uploaded:
             cairosvg.svg2png(bytestring=self.svgText,
-                             write_to='output.png', scale=int(4096/bigger))
-            fileSize = os.stat("output.png").st_size/1024
-            limit_kb = 3072
+                             write_to='output.png', scale=int(4096 / bigger))
+            fileSize = os.stat("output.png").st_size / 1024
             if fileSize < limit_kb:
                 uploaded = True
             else:
@@ -394,22 +373,6 @@ class CountryMixer():
             except:
                 print("Unable to delete", filePath)
 
-    def manuallyDownloadFlags(self, alpha3CodeFlag1=None, alpha3CodeFlag2=None):
-        if not alpha3CodeFlag1:
-            self.first_country = self.chooseRandomFlag()
-        else:
-            self.first_country = self.getCountry(alpha3CodeFlag1)
-
-        if not alpha3CodeFlag2:
-            self.second_country = self.chooseRandomFlag()
-        else:
-            self.second_country = self.getCountry(alpha3CodeFlag2)
-
-        self.countries = (self.first_country, self.second_country)
-
-        self.downloadPNGFlag(self.first_country["alpha3Code"])
-        self.downloadPNGFlag(self.second_country["alpha3Code"])
-
     def main(self):
         self.flags_info = self.getFullFlagsInfoJSON()
         correct_country = False
@@ -419,13 +382,12 @@ class CountryMixer():
                 self.getNeighbours()
             else:
                 self.randomlyDownloadFlags()
-#            self.manuallyDownloadFlags()
 
             correct_country = self.checkMashupValid()
 
         self.insertCountries()
         self.mixFlags()
-        print("Base is "+self.template3Code)
+        print("Base is " + self.template3Code)
         print(self.first_country['alpha3Code'],
               self.second_country['alpha3Code'])
         name = self.calculateNames()
