@@ -373,6 +373,22 @@ class CountryMixer:
             except:
                 print("Unable to delete", filePath)
 
+    def manuallyDownloadFlags(self, alpha3CodeFlag1=None, alpha3CodeFlag2=None):
+        if not alpha3CodeFlag1:
+            self.first_country = self.chooseRandomFlag()
+        else:
+            self.first_country = self.getCountry(alpha3CodeFlag1)
+
+        if not alpha3CodeFlag2:
+            self.second_country = self.chooseRandomFlag()
+        else:
+            self.second_country = self.getCountry(alpha3CodeFlag2)
+
+        self.countries = (self.first_country, self.second_country)
+
+        self.downloadPNGFlag(self.first_country["alpha3Code"])
+        self.downloadPNGFlag(self.second_country["alpha3Code"])
+
     def main(self):
         self.flags_info = self.getFullFlagsInfoJSON()
         correct_country = False
@@ -382,6 +398,7 @@ class CountryMixer:
                 self.getNeighbours()
             else:
                 self.randomlyDownloadFlags()
+            # self.manuallyDownloadFlags()
 
             correct_country = self.checkMashupValid()
 
