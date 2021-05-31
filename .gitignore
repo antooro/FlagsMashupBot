@@ -1,0 +1,13 @@
+# IDE Folders
+.vscode
+.idea
+
+## VENV folders and files
+bin
+include
+lib
+__pycache__
+pyvenv.cfg
+
+# Generated PNGs
+*.png
