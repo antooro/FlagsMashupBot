@@ -298,25 +298,6 @@ class CountryMixer:
         name1 = self.first_country['name']['common']
         name2 = self.second_country['name']['common']
 
-        if "(" in name1:
-            p_temp = name1.split("(")
-            name1 = p_temp[1].replace(")", "") + " " + p_temp[0]
-
-        if "(" in name2:
-            p_temp = name2.split("(")
-            name2 = p_temp[1].replace(")", "") + " " + p_temp[0]
-
-        if "," in name1:
-            p_temp = name1.split(", ")
-            name1 = p_temp[1] + " " + p_temp[0]
-
-        if "," in name2:
-            p_temp = name2.split(", ")
-            name2 = p_temp[1] + " " + p_temp[0]
-
-        self.first_country['name']['common'] = name1
-        self.second_country['name']['common'] = name2
-
         if name1 == name2:
             return name1 + ' 2'
 
