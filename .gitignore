@@ -5,7 +5,7 @@
 ## VENV folders and files
 bin
 include
-lib
+lib*
 __pycache__
 pyvenv.cfg
 

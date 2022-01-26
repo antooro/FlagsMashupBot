@@ -5,14 +5,14 @@ http://flagsmashupbot.pythonanywhere.com/
 
 
 
-![alt text](https://i.imgur.com/LSepqer.png)
+![Twitter Screenshot](https://i.imgur.com/8SD4piZ.png)
 
 https://twitter.com/FlagsMashupBot
 -------------------------------------------------------
 
 ## Prerequisites
  - Python3
- - Pycairo's [required files in your machine](https://pycairo.readthedocs.io/en/latest/getting_started.html)
+ - Cairo's [required files in your machine](https://cairosvg.org/documentation/#installation)
 
 ### Clone the repo
 ```bash
@@ -22,7 +22,7 @@ git clone https://github.com/antooro/FlagsMashupBot
 ### Start a virtual environment
 **LINUX/OSX**: Inside the repo folder
 ```bash
-python -m ./ # starts the venv in the current folder
+python3 -m venv ./ # starts the venv in the current folder
 source bin/activate # On LINUX or OSX
 .\Scripts\activate # ONLY Windows
 ```
