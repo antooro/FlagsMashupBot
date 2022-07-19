@@ -11,7 +11,7 @@ cssselect2==0.4.1
 defusedxml==0.7.1
 idna==2.10
 lxml==4.9.1
-Pillow==9.0.0
+Pillow==9.0.1
 pycparser==2.20
 requests==2.25.1
 soupsieve==2.2.1
