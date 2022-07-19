@@ -10,7 +10,7 @@ chardet==4.0.0
 cssselect2==0.4.1
 defusedxml==0.7.1
 idna==2.10
-lxml==4.6.3
+lxml==4.9.1
 Pillow==9.0.0
 pycparser==2.20
 requests==2.25.1
